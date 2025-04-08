@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArXiv ML Papers | Daily Summaries</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --card-bg: #ffffff;
+            --card-border: rgba(0,0,0,0.08);
+            --card-shadow: rgba(0,0,0,0.1);
+            --accent-light: #f1f8ff;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .date-selector-wrapper {
+            background-color: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 8px;
+            display: inline-block;
+        }
+        
+        .date-selector {
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-weight: 500;
+            padding: 8px 12px;
+        }
+        
+        .date-selector option {
+            color: #333;
+        }
+        
+        .paper-card {
+        height: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 5px 15px var(--card-shadow);
+        background-color: var(--card-bg);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column; /* Make the card a flex container */
+    }
+        
+        .paper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background-color: var(--accent-light);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1.25rem;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .authors {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .key-points-preview {
+        padding: 1.25rem;
+        cursor: pointer;
+        flex-grow: 1; /* Allow this section to grow and fill space */
+        }
+        
+        .key-points-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        
+        .key-points-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .key-points-list li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0.25rem;
+        }
+        
+        .paper-details {
+            display: none;
+            padding: 1.25rem;
+            border-top: 1px solid var(--card-border);
+            background-color: #fcfcfc;
+        }
+        
+        .expand-button {
+        text-align: center;
+        padding: 0.5rem;
+        background-color: var(--accent-light);
+        color: var(--primary-color);
+        cursor: pointer;
+        font-weight: 600;
+        border-top: 1px solid var(--card-border);
+        transition: background-color 0.2s ease;
+        margin-top: auto; /* Push to bottom of flex container */
+        }
+        
+        .expand-button:hover {
+            background-color: #e7f3ff;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #444;
+        }
+        
+        .badge {
+            font-size: 75%;
+            font-weight: 500;
+        }
+        
+        .arxiv-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .arxiv-link:hover {
+            text-decoration: underline;
+        }
+        
+        .info-badge {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+            font-weight: normal;
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 1.5rem;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-section">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title">
+                        <i class="fas fa-robot me-2"></i> AI-Powered arXiv Paper Summaries
+                    </h1>
+                    <p class="mb-2"> By <a href="https://www.linkedin.com/in/james-alexander-asher/" target="_blank" class="text-white fw-bold">James Asher</a>
+                    </p>
+                    <p class="lead">Daily summaries of the latest Machine Learning research papers, generated with Azure OpenAI.</p>
+                </div>
+                <div class="col-md-4 text-md-end text-start mt-3 mt-md-0">
+                    <div class="date-selector-wrapper">
+                        <form id="dateForm">
+                            <select id="dateSelect" class="date-selector" name="date" onchange="this.form.submit()">
+                                {% for date_option in date_options %}
+                                <option value="{{ date_option.value }}" {% if date_option.selected %}selected{% endif %}>
+                                    {{ date_option.display }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <span class="info-badge">
+                <i class="fas fa-calendar-alt me-2"></i> {{ date }} • Found {{ paper_count }} papers
+            </span>
+        </div>
+
+        {% if papers %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for paper in papers %}
+                <div class="col">
+                    <div class="paper-card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ paper.title }}</h3>
+                            <div class="authors">
+                                {% if paper.authors is string %}
+                                    {{ paper.authors }}
+                                {% else %}
+                                    {{ paper.authors|join(', ') }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="key-points-preview" onclick="toggleDetails('{{ loop.index }}')">
+                            <ul class="key-points-list">
+                                {% for point in paper.key_points[:3] %}
+                                <li>{{ point }}</li>
+                                {% endfor %}
+                                {% if paper.key_points|length > 3 %}
+                                <li class="text-muted">+ {{ paper.key_points|length - 3 }} more key points...</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                        <div class="expand-button" onclick="toggleDetails('{{ loop.index }}')">
+                            <span id="button-text-{{ loop.index }}">
+                                <i class="fas fa-chevron-down me-1"></i> Read More
+                            </span>
+                        </div>
+                        
+                        <div id="paper-details-{{ loop.index }}" class="paper-details">
+                            <div class="section-title">Abstract</div>
+                            <div class="section-content">{{ paper.summary }}</div>
+                            
+                            <div class="section-title">Methodology</div>
+                            <div class="section-content">{{ paper.methodology }}</div>
+                            
+                            <div class="section-title">Results</div>
+                            <div class="section-content">{{ paper.results }}</div>
+                            
+                            <div class="section-title">Implications</div>
+                            <div class="section-content">{{ paper.implications }}</div>
+                            
+                            {% if paper.arxiv_id %}
+                            <a href="https://arxiv.org/abs/{{ paper.arxiv_id }}" class="arxiv-link" target="_blank">
+                                <i class="fas fa-external-link-alt me-1"></i> View on arXiv
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i> No papers found for this date. Try another date or run the paper processing script.
+            </div>
+        {% endif %}
+        
+        <footer>
+            <p>
+                <i class="fas fa-code me-1"></i> Built with FastAPI, Azure OpenAI, and Bootstrap
+                <br>
+                <small class="text-muted">© 2025 Paper Scraper</small>
+            </p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleDetails(id) {
+            const detailsElement = document.getElementById(`paper-details-${id}`);
+            const buttonText = document.getElementById(`button-text-${id}`);
+            
+            if (detailsElement.style.display === "block") {
+                detailsElement.style.display = "none";
+                buttonText.innerHTML = '<i class="fas fa-chevron-down me-1"></i> Read More';
+            } else {
+                detailsElement.style.display = "block";
+                buttonText.innerHTML = '<i class="fas fa-chevron-up me-1"></i> Show Less';
+            }
+        }
+    </script>
+</body>
+</html>
