@@ -24,7 +24,7 @@ class OpenAISummarizer:
         endpoint: Optional[str] = None,
         deployment_name: str = "gpt-4o",
         api_version: str = "2023-05-15",
-        max_tokens: int = 100000
+        max_tokens: int = 15000
     ):
         """
         Initialize the OpenAI summarizer.
