@@ -1,12 +1,11 @@
 # DailyMachineLearning.com: ML Paper Summarizer
 
-[![GitHub Actions Status](https://github.com/yourusername/paperscraper/workflows/Run%20Paper%20Scraper/badge.svg)](https://github.com/yourusername/paperscraper/actions)
-
 A web application that provides daily summaries of machine learning research papers from arXiv, powered by Azure OpenAI.
+
 
 ## 🔗 [Visit dailymachinelearning.com](https://dailymachinelearning.com)
 
-![Screenshot of the application](screenshot.png)
+#### By [James Asher](https://www.linkedin.com/in/james-alexander-asher/)
 
 ## 📋 Overview
 
@@ -131,5 +130,3 @@ jobs:
         AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
         AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
       run: python main.py
-
-Built by James Asher
