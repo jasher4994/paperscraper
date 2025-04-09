@@ -1,10 +1,10 @@
 import os
 import logging
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
+from typing import Optional
 
 import dotenv
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,38 +12,31 @@ import uvicorn
 
 from storage import AzureBlobStorage
 
-# Load environment variables
-dotenv.load_dotenv()
+# Load environment variables, forcing to avoid previous problems with cached values.
+dotenv.load_dotenv(override=True)
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
 app = FastAPI(
     title="ArXiv Paper Summaries",
     description="Daily summaries of recent machine learning papers from arXiv",
     version="1.0.0"
 )
 
-# Set up directory for templates and static files
 templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 
-# Create directories if they don't exist
 os.makedirs(templates_dir, exist_ok=True)
 os.makedirs(static_dir, exist_ok=True)
 
-# Initialize templates
 templates = Jinja2Templates(directory=templates_dir)
 
-# Serve static files
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-# Initialize storage client
 storage = AzureBlobStorage()
 
 @app.get("/", response_class=HTMLResponse)
@@ -62,7 +55,6 @@ async def read_root(request: Request, date: Optional[str] = None):
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
     
-    # Get list of papers for the date
     paper_ids = storage.list_papers_by_date(date)
     
     papers = []
@@ -71,10 +63,8 @@ async def read_root(request: Request, date: Optional[str] = None):
         if success:
             papers.append(summary)
     
-    # Sort papers by title
     papers.sort(key=lambda x: x.get("title", ""))
     
-    # Generate date options for the date selector (last 7 days)
     date_options = []
     for i in range(7):
         d = datetime.now() - timedelta(days=i)
@@ -109,11 +99,9 @@ async def get_papers(date: Optional[str] = None):
     Returns:
         JSON response with paper summaries
     """
-    # Use today's date if not specified
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
     
-    # Get list of papers for the date
     paper_ids = storage.list_papers_by_date(date)
     
     papers = []
@@ -122,7 +110,6 @@ async def get_papers(date: Optional[str] = None):
         if success:
             papers.append(summary)
     
-    # Sort papers by title
     papers.sort(key=lambda x: x.get("title", ""))
     
     return {"date": date, "papers": papers, "count": len(papers)}
@@ -140,7 +127,6 @@ async def get_paper(arxiv_id: str, date: Optional[str] = None):
     Returns:
         JSON response with paper summary
     """
-    # Use today's date if not specified
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
     
@@ -153,6 +139,8 @@ async def get_paper(arxiv_id: str, date: Optional[str] = None):
 
 
 if __name__ == "__main__":
+    print('##############################')
+    print(os.getenv("AZURE_STORAGE_CONNECTION_STRING"))
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("app:app", host="0.0.0.0", port=port)
