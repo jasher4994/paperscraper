@@ -279,12 +279,10 @@
                         
                         <div class="key-points-preview" onclick="toggleDetails('{{ loop.index }}')">
                             <ul class="key-points-list">
-                                {% for point in paper.key_points[:3] %}
+                                {% for point in paper.key_points[:5] %}
                                 <li>{{ point }}</li>
                                 {% endfor %}
-                                {% if paper.key_points|length > 3 %}
-                                <li class="text-muted">+ {{ paper.key_points|length - 3 }} more key points...</li>
-                                {% endif %}
+
                             </ul>
                         </div>
                         
