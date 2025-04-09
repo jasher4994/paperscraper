@@ -57,7 +57,7 @@ When a user visits the site:
 
 When new papers are added:
 1. GitHub Actions runs the scraper script every 8 hours
-2. New papers are processed and saved to the current date's folder
+2. New papers are processed and saved to the current date's folder (only metadata is saved)
 3. The next time a user visits, they'll see the newly added papers
 
 ## 🛠️ Technologies Used
